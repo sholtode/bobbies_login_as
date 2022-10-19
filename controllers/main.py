@@ -4,7 +4,7 @@
 
 from uuid import uuid4
 
-from odoo.http import redirect_with_hash, request, route
+from odoo.http import request, route
 
 from odoo.addons.web.controllers.main import Home, Session
 
@@ -28,7 +28,7 @@ class LoginAsHome(Home):
                 key = user.env['res.users.apikeys']._generate(
                     SCOPE, uuid4().hex)
             _login_as(uid)
-        response = redirect_with_hash(
+        response = request.redirect(
             self._login_redirect(request.session.uid))
         if key:
             response.set_cookie(SCOPE, key)
@@ -42,7 +42,7 @@ class LoginAsSession(Session):
         uid = self._get_origin_user_id()
         if uid:
             _login_as(uid)
-            response = redirect_with_hash('/web')
+            response = request.redirect('/web')
         else:
             response = super().logout(redirect)
         if request.httprequest.cookies.get(SCOPE):
